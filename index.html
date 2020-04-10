@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="address=no">
+    <script type="text/javascript" src="js/jquery-2.1.0.js" ></script>
+    <script type="text/javascript" src="//3gimg.qq.com/lightmap/components/locationPicker2/js/main-62c2e3b971.js"></script>
+    <title>locationPicker Components Demo - iframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body, html{
+            overflow: hidden;
+        }
+    </style>
+    <script type="text/javascript" src="js/jquery-2.1.0.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <!-- 引入样式文件 -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+	
+	<!-- 引入 Vue 和 Vant 的 JS 文件 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+	<script src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+</head>
+<body>
+	
+	<header class="mui-bar mui-bar-nav">
+	    <h1 class="mui-title">测试</h1>
+	</header>
+	<div class="mui-content" id="app">
+		经度lng：<p>{{longitude}}</p>
+		维度lat：<p>{{latitude}}</p>
+		目标经度mlng：<p>{{mlongitude}}</p>
+		目标维度mlat：<p>{{mlatitude}}</p>
+		距离：<p>{{dis}}米</p>
+		<a href="test.html">测试</a>
+		<iframe id="iframe" width="100%;" height="300px" frameborder=0 scrolling="no"
+	        src="https://apis.map.qq.com/tools/locpicker?search=1&type=1&key=PVYBZ-O2ZWG-YLVQS-IEYLV-LQTZF-MPBDO&referer=myapp">
+	    </iframe>
+	</div>
+<script type="text/javascript" charset="utf-8">
+		var app=new Vue({
+			el:"#app",
+			data:{
+				longitude:'',
+				latitude:'',
+				mlongitude:'',
+				mlatitude:'',
+				dis:''
+			},
+			methods:{
+				getDis(){
+					var latitude=this.latitude
+					var longitude=this.longitude
+					var mlatitude=this.mlatitude
+					var mlongitude=this.mlongitude
+					var _this=this
+					if(latitude!=''&&longitude!=''&&mlatitude!=''&&mlongitude!=''){
+								$.ajax({
+								type:"post",
+								url:"http://139.9.213.227:4000/getdistance",
+								header: {'content-type': 'application/x-www-form-urlencoded'},
+								data:{
+									'lat':latitude,
+									'lng':longitude,
+									'mlat':mlatitude,
+									'mlng':mlongitude
+								},
+								async:false,
+								success:function(res){
+									_this.dis=res
+									console.log(this.dis)
+								}
+						});
+					}
+				}
+			},
+			updated(){
+				this.getDis()
+//				plus.geolocation.watchPosition()
+				
+			}
+			
+			
+		})
+		$(function(){ 
+
+            adaptHeight();//动态适配高度
+           
+            window.onresize = function() { //横屏、QQ浏览器变全屏模式下的时候，需要重新计算高度              
+                adaptHeight();                
+            }
+
+            window.addEventListener('message', function(event) {
+                var loc = event.data;
+                console.log(loc.latlng.lng)
+                console.log(loc.latlng.lat)
+                app.mlongitude=loc.latlng.lng
+                app.mlatitude=loc.latlng.lat
+            }, false);
+
+            function adaptHeight() {
+                var winH = $(window).height(); 
+                var bodyH = document.documentElement.clientHeight; 
+                if (winH > bodyH) {
+                    window.parent.document.getElementById("iframe").height=winH;
+                } else {
+                    window.parent.document.getElementById("iframe").height=bodyH;
+                }  
+            }
+        });
+      	mui.init();
+      	// 扩展API加载完毕后调用onPlusReady回调函数 
+		document.addEventListener('plusready', onPlusReady, false);
+//		 扩展API加载完毕，现在可以正常调用扩展API
+		function onPlusReady(){
+			plus.geolocation.watchPosition(function(p){
+				app.longitude=p.coords.longitude;
+				app.latitude=p.coords.latitude;
+				app.altitude=p.coords.altitude;
+				
+			}, function(e){
+				app.tip=e.message;
+			} ); 
+		}
+    </script>	
+</body>
+</html>
