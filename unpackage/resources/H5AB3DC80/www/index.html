@@ -66,7 +66,7 @@
 		  
 		</van-tabbar>
 		
-		<div class="mui-content" v-if='active==0'>
+		<div class="mui-content" v-show='active==0'>
 			
 			<van-notice-bar
 			  color="#1989fa"
@@ -86,7 +86,7 @@
 									<span>名字：{{item.name}}</span><br />
 									<span>手机号：{{item.phone}}</span><br />
 									<span>地址：{{item.location}}</span><br />
-									<span v-if="item.send">还有：{{item.dis}}米</span>
+									<span v-if="item.send">还有：{{item.mlongitude}}米</span>
 									<span v-else>未开始配送！</span>
 								</van-col>
 								<van-col span="4">
@@ -137,7 +137,6 @@
 			<div class="mui-input-row mui-search">
 			    <input type="search" class="mui-input-clear" placeholder="输入手机号搜索订单">
 			</div>
-			<van-button @click="loginout">退出</van-button>
 			<van-divider :style="{ color: '#1989fa', borderColor: '#1989fa', padding: '0 16px' }">
 			  我也是有底线的
 			</van-divider>
@@ -160,7 +159,9 @@
 				addflag:false,
 				formdata:{name:'',phone:'',location:''},
 				waimaiData:[
-					
+					{name:'4',mlongitude:'432423',mlatitude:'2432',location:'西南林业大学14栋',send:true,phone:"15187464876"},
+					{name:'2',mlongitude:'23423',mlatitude:'423423',location:'西南林业大学山下图书馆',send:false,phone:"15187464872"},
+					{name:'3',mlongitude:'23423',mlatitude:'423423',location:'4栋',send:false,phone:"15187464871"}
 				],
 				iconform:[
 					{text:'个人信息',icon:"friends-o",click:"loginout"},
@@ -170,54 +171,17 @@
 			},
 			methods:{
 				additem(){
-					var _this=this
-					var name=_this.formdata.name
-					var location=_this.formdata.location
-					var phone=_this.formdata.phone
-					$.ajax({
-					type:"post",
-					url:"http://139.9.213.227:4000/takeaway_additem",
-					header: {'content-type': 'application/x-www-form-urlencoded'},
-					data:{'name':name,'mlongitude':'23423','mlatitude':'423423','location':location,'user':localStorage.getItem('phone'),'id':Date.now(),'phone':phone},
-					async:false,
-					success:function(res){
-						console.log(res)
-						if(res=='ok'){
-							mui.toast("添加成功")
-							_this.formdata.name=_this.formdata.location=_this.formdata.phone=''
-							_this.active=0
-							_this.getitem()
-						}
-					}
-					
-					
-				})},
+					var name=this.formdata.name
+					var location=this.formdata.location
+					var phone=this.formdata.phone
+					this.waimaiData.push({name:name,mlongitude:'23423',mlatitude:'423423',location:location,send:false,phone:phone})
+					mui.toast("添加成功")
+					this.formdata.name=this.formdata.location=this.formdata.phone=''
+					this.active=0
+				},
 				loginout(){
 					localStorage.clear();
-					window.location.href="login.html"
-				},
-				getitem(){
-					var _this=this
-					$.ajax({
-							type:"post",
-							url:"http://139.9.213.227:4000/takeaway_getitem",
-							header: {'content-type': 'application/x-www-form-urlencoded'},
-							data:{
-								'user':localStorage.getItem('phone')
-							},
-							async:false,
-							success:function(res){
-								if (res.length>0) {
-									_this.waimaiData=[]
-									for(let i=0;i<res.length;i++){
-										_this.waimaiData.push({name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:res[i][5],phone:res[i][6],id:res[i][8]})
-									}
-									console.log(_this.waimaiData)
-								} else{
-									
-								}
-							}
-					});
+					
 				},
 				getDis(){
 					var latitude=this.latitude
@@ -250,14 +214,9 @@
 				}
 			},
 			created(){
-				this.getitem()
-				
 			},
 			mounted(){
 				this.getDis()
-			},
-			watch:{
-				
 			},
 			updated(){
 				this.getDis()
@@ -266,7 +225,7 @@
 			},
 			beforeCreate(){
 				if(!localStorage.getItem('username')){
-					mui.toast("请登录！")
+					alert("请登录")
 					window.location.href='login.html'
 				}
 			}
