@@ -33,27 +33,35 @@
     <script src="js/mui.min.js"></script>
     <link href="css/mui.min.css" rel="stylesheet"/>
     <!-- 引入样式文件 -->
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.2/lib/index.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.6/lib/index.css"/>
 	
 	<!-- 引入 Vue 和 Vant 的 JS 文件 -->
 	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
-	<script src="https://cdn.jsdelivr.net/npm/vant@2.2/lib/vant.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.6/lib/vant.min.js"></script>
 	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
 	<script src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
 </head>
 <body>
 	
 	
-	<div class="mui-content" id="login">
+	<div  id="login">
 		<van-nav-bar
-		  title="标题"
+		  title="修改"
 		  left-text="返回"
-		  right-text="按钮"
 		  left-arrow
 		  @click-left="onClickLeft"
-		  @click-right="onClickRight"
 		/>
 		
+		<van-divider :style="{ color: '#55007f', borderColor: '#55007f', padding: '0 16px' }">
+		  修改外卖订单
+		</van-divider>
+		<iframe v-show="!changeflag" id="iframe" style="position: fixed;" width="100%;" height="90%" frameborder=0 scrolling="no"
+			src="https://apis.map.qq.com/tools/locpicker?search=1&type=1&key=PVYBZ-O2ZWG-YLVQS-IEYLV-LQTZF-MPBDO&referer=myapp">
+		</iframe>
+		<div class="mui-content">
+			
+			
+		</div>
 		
 	</div>
 	
@@ -62,58 +70,61 @@
 		var app=new Vue({
 			el:"#login",
 			data:{
-				username:'',
-				password:''
+				data:[],
+				changeflag:false,
 			},
 			methods:{
+				changeitem(){
+					
+				},
+				delete(){
+					
+				},
+				onClickLeft() {
+				      history.go(-1)
+					  sessionStorage.removeItem("data");
+				},
 				onSubmit(values) {
 				      console.log('submit', values);
-				    },
-				login(){
-						var _this=this;
-						var username=_this.username;
-						var password=_this.password;
-						if(username&&password){
-							$.ajax({
-							type:"post",
-							url:"http://139.9.213.227:4000/takeaway_login",
-							header: {'content-type': 'application/x-www-form-urlencoded'},
-							data:{
-								'username':username,
-								'password':password
-							},
-							async:false,
-							success:function(res){
-								if (res==400) {
-									mui.toast("用户名或密码错误！")
-								} else{
-									localStorage.setItem('username', username);
-									localStorage.setItem('password', password);
-									localStorage.setItem('phone',res[0][2])
-									localStorage.setItem('admin',res[0][3])
-									mui.toast("登陆成功！")
-									window.location.href='index.html'
-								}
-							},
-							error:function(e){
-								mui.toast(e)
-							}
-							})
-							
-							
-						}else{
-							mui.toast("请输入用户名或密码")
-						}
-				},
-				cancel(){
-					this.username=this.password=''
-				}
-				}
+				    }
+			},
+			created() {
+				
+				var hh = sessionStorage.getItem("data");//获取键为allJson的字符串
+				var pp = JSON.parse(hh);//将字符串抓换成对象
+				this.data=pp
+				console.log(this.data)
+			}
 			
 			
 			
 		})
-
+		$(function(){
+		
+		    adaptHeight();//动态适配高度
+		   
+		    window.onresize = function() { //横屏、QQ浏览器变全屏模式下的时候，需要重新计算高度              
+		        adaptHeight();                
+		    }
+		
+		    window.addEventListener('message', function(event) {
+		        var loc = event.data;
+		        update.data.mlongitude=loc.latlng.lng
+		        update.data.mlatitude=loc.latlng.lat
+				update.changeflag=!update.changeflag
+				update.data.location=loc.poiname
+		    }, false);
+		
+		    function adaptHeight() {
+		        var winH = $(window).height(); 
+		        var bodyH = document.documentElement.clientHeight; 
+		        if (winH > bodyH) {
+		            window.parent.document.getElementById("iframe").height=winH;
+		        } else {
+		            window.parent.document.getElementById("iframe").height=bodyH;
+		        }  
+		    }
+		});
     </script>	
 </body>
 </html>
