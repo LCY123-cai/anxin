@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="address=no">
+    <script type="text/javascript" src="js/jquery-2.1.0.js" ></script>
+    <script type="text/javascript" src="//3gimg.qq.com/lightmap/components/locationPicker2/js/main-62c2e3b971.js"></script>
+    <title>locationPicker Components Demo - iframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body, html{
+            overflow: hidden;
+        }
+		.itembox{
+			padding:10px;
+			background-color: white;
+			border-radius: 10px;
+			color: #8d8d8d;
+			margin: 10px 0px;
+			box-shadow: #1989fa 0 1px 2px 1px;
+		}
+		.detailbox{
+			padding:10px;
+			background-color: white;
+			border-radius: 10px;
+			color: #8d8d8d;
+			margin: 10px 0px;
+			font-size: 14px;
+		}
+		[v-cloak] {
+		
+		     display: none;
+		
+		}
+    </style>
+    <script type="text/javascript" src="js/jquery-2.1.0.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <!-- 引入样式文件 -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.6/lib/index.css"/>
+	
+	<!-- 引入 Vue 和 Vant 的 JS 文件 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.6/lib/vant.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+	<script src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+</head>
+<body>
+	
+	
+	<div  id="history" v-cloak>
+		<van-nav-bar
+		  title="历史订单"
+		  left-text="返回"
+		  left-arrow
+		  @click-left="onClickLeft"
+		></van-nav-bar>
+		<van-pull-refresh
+		  v-model="isLoading"
+		  success-text="刷新成功"
+		  @refresh="onRefresh"
+		>
+		<div style="margin: 0px 10px;">
+			<div v-if='data.length>0' >
+				<div class="mui-input-row mui-search">
+				    <input type="search" class="mui-input-clear" v-model="keywords" placeholder="输入手机号/名字/地址搜索订单">
+				</div>
+				
+				<div v-for="item in search(keywords)">
+					<transition name="van-slide-down">
+					  <div >
+						  <van-row >
+						    <van-col span="24"  class="itembox" >
+								<van-row >
+									<van-col span="20" @click='option(item)'>
+										<span>名字：{{item.name}}</span><br />
+										<span>手机号：{{item.phone}}</span><br />
+										<span>地址：{{item.location}}</span><br />
+										<span>完成时间：{{item.time}}</span><br />
+									</van-col>
+								</van-row>
+							</van-col>
+						  </van-row>
+					  </div>
+					</transition>	
+					<van-action-sheet v-model="detailflag" title="订单详情">
+					  <div class="content">
+						  <van-col span="24"  class="detailbox" >
+						  	<van-row >
+						  		<van-col span="20" >
+						  			<span>名字：{{detail.name}}</span><br />
+						  			<span>手机号：{{detail.phone}}</span><br />
+						  			<span>地址：{{detail.location}}</span><br />
+						  			<span>完成时间：{{detail.time}}</span><br />
+									<span>订单ID：{{detail.id}}</span><br />
+						  		</van-col>
+						  	</van-row>
+						  	
+						  	<row>
+						  		<van-steps
+								direction="vertical"
+						  		  :active="detail.sendactive"
+						  		  active-icon="success"
+						  		  active-color="#38f"
+						  		>
+								<van-step>
+									<h5>已短信通知</h5>
+									<span>{{detail.time}}</span>
+								</van-step>
+								<van-step>
+									<h5>开始配送</h5>
+								</van-step>
+						  		  <van-step>
+									  <h5>订单已添加</h5>
+									  <span>{{detail.createtime}}</span>
+								  </van-step>
+						  		  
+						  		  
+						  		</van-steps>
+						  	</row>
+						  </van-col>
+					  </div>
+					</van-action-sheet>
+				</div>
+				
+			</div>
+			<div v-else>
+				<van-empty
+				  class="custom-image"
+				  image="https://img.yzcdn.cn/vant/custom-empty-image.png"
+				  style='margin-top: 40%;margin-bottom: 50%;'
+				  description="历史订单为0！"
+				/>
+			</div>
+		</div>
+		</van-pull-refresh>
+	</div>
+	
+<script type="text/javascript" charset="utf-8">
+	
+		var app=new Vue({
+			el:"#history",
+			data:{
+				data:[],
+				keywords:'',
+				detailflag:false,
+				isLoading: false,
+				detail:''
+			},
+			methods:{
+				onRefresh() {
+				      setTimeout(() => {
+				        this.isLoading = false;
+						this.historyitem()
+						this.keywords=''
+				      }, 1000);
+				    },
+				option(item){
+					//sessionStorage.setItem("data", JSON.stringify(item));
+					this.detail=item
+					this.detailflag=true
+				},
+				search(keywords){
+				    return  this.data.filter(item=>{
+				        if(item.name.includes(keywords)){
+				            return item;
+				        }else if(item.phone.includes(keywords)){
+				            return item;
+				        }else if(item.location.includes(keywords)){
+				            return item;
+				        }
+				    })
+				},
+				onSubmit(values) {
+				      console.log('submit', values);
+				    },
+				onClickLeft() {
+				      history.go(-1)
+					  sessionStorage.removeItem("data");
+				},
+				historyitem(){
+					var _this=this
+					$.ajax({
+							type:"post",
+							url:"http://139.9.213.227:4000/takeaway_historyitem",
+							header: {'content-type': 'application/x-www-form-urlencoded'},
+							data:{
+								'user':localStorage.getItem('phone')
+							},
+							async:false,
+							success:function(res){
+								if (res!='fail') {
+									_this.data=[]
+									this.keywords=''
+									
+									for(let i=0;i<res.length;i++){
+										_this.data.push({sendactive:'0',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:res[i][5],phone:res[i][6],id:res[i][8],time:res[i][10],createtime:res[i][9]})
+									}
+								} else{
+									_this.data=[]
+								}
+							},
+							
+					});
+				},
+			},
+			created() {
+				this.historyitem()
+				
+			}
+			
+			
+			
+		})
+    </script>	
+</body>
+</html>

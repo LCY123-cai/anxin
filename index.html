@@ -60,6 +60,20 @@
 		.content {
 		  padding: 16px 16px 80px;
 		}
+		.selfcontent {
+		  padding: 50px 16px 80px;
+		}
+		.selfcontent input{
+			padding: 10px;
+			margin: 5px;
+			border-radius: 20px;
+			background-color: white;
+			text-align: center;
+			color: #1989FA;
+		}
+		.selfcontent span{
+			text-align: center;
+		}
     </style>
     <script type="text/javascript" src="js/jquery-2.1.0.js" ></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
@@ -92,7 +106,7 @@
 		  
 		</van-tabbar>
 		
-		<div class="mui-content"  v-if='active==0'>
+		<div class="mui-content"  v-show='active==0'>
 			
 			<div v-show="!changemapflag">
 				<van-notice-bar
@@ -117,7 +131,7 @@
 					    <input type="search" class="mui-input-clear" v-model="keywords" placeholder="输入手机号/名字/地址搜索订单">
 					</div>
 					<div v-for="item in search(keywords)">
-						<transition name="van-slide-down">
+						<transition name="van-slide-left">
 						  <div v-show="active==0">
 							  
 							  <van-swipe-cell>
@@ -198,7 +212,7 @@
 					  style='margin-top: 40%;margin-bottom: 50%;'
 					  description="待配送订单为0，快去添加吧！"
 					/>
-					<van-button @click='active=1' round type="info" style='width: 160px;'>
+					<van-button @click='active=1' round type="info" color="linear-gradient(to right, #4bb0ff, #f61c85)" style='width: 160px;'>
 					    添加订单
 					  </van-button>
 				</div>
@@ -253,11 +267,38 @@
 								<h3 style="line-height: 50px;">{{username}}</h3>
 							</van-col>
 						</van-row>
-					
-					<van-divider :style="{ color: '#1989fa', borderColor: '#e2e2e2', padding: '0 16px' }"></van-divider>
+						<van-divider :style="{ color: '#1989fa', borderColor: '#e2e2e2', padding: '0 16px' }"></van-divider>
+					<van-row>
+						<van-col span="22" offset='1'>
+							<van-cell icon="manager"  center title="个人信息" is-link @click="changeself" />
+						</van-col>
+						<van-col span="22" offset='1'>
+							<van-cell icon="todo-list" center title="历史订单" is-link url="history.html" />
+						</van-col>
+						<van-col span="22" offset='1'>
+							<van-cell icon="more" center title="关于我们" is-link url="about.html" />
+						</van-col>
+						
+					</van-row>
+					<van-popup round closeable v-model="selfflag">
+						<div class="selfcontent">
+							<span>用户名</span>
+							<input :disabled='changeselfflag' placeholder="请输入名字" v-model="selfdata.username" />
+							<span>手机号</span><input :disabled='changeselfflag'  placeholder="请输入手机号" v-model="selfdata.phone" />
+							<div v-show='!changeselfflag'>
+								<span>原密码</span>
+								<input :disabled='changeselfflag' placeholder="请输入原密码"  v-model="selfdata.pwd" />
+								<span>新密码</span>
+								<input :disabled='changeselfflag' placeholder="请输入新密码"  v-model="selfdata.npwd" />
+							</div>
+							<van-button v-show='changeselfflag' icon='clear' style='width: 100%;' color="linear-gradient(to right, #4bb0ff, #6149f6)" round @click="changeselfflag=false">修改</van-button>
+							<van-button v-show='!changeselfflag' icon='clear' style='width: 100%;' color="linear-gradient(to right, #4bb0ff, #6149f6)" round @click="checkandupdate">确认</van-button>
+						</div>
+					</van-popup>
 					<van-col span="20" offset="2">
 						<van-button icon='clear' style='width: 100%;' color="linear-gradient(to right, #4bb0ff, #6149f6)" round @click="loginout">退出</van-button>
 					</van-col>
+					
 				</van-row>
 
 				
@@ -274,7 +315,7 @@
 			el:"#app",
 			data:{
 				longitude:'',
-				notice:'通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容通知内容',
+				notice:'',
 				active:0,
 				latitude:'',
 				mlongitude:'',
@@ -287,9 +328,18 @@
 				addflag:false,
 				changeflag:false,
 				changemapflag:false,
+				selfflag:false,
+				changeselfflag:true,
 				formdata:{name:'',phone:'',location:''},
 				waimaiData:[],
 				changedata:{},
+				selfdata:{
+					'username':localStorage.getItem('username'),
+					'phone':localStorage.getItem('phone'),
+					'password':localStorage.getItem('password'),
+					'pwd':'',
+					'npwd':''
+				},
 				iconform:[
 					{text:'个人信息',icon:"friends-o",click:"loginout"},
 					{text:'历史订单',icon:"clock-o",click:"loginout"},
@@ -297,6 +347,42 @@
 				]
 			},
 			methods:{
+				checkandupdate(){
+					var _this=this
+					let data=_this.selfdata
+					if(data.username!=''&&data.phone!=''&&data.pwd!=''&&data.npwd!=''){
+						if(data.password!=data.pwd){
+							mui.toast('原密码错误！')
+						}else{
+							$.ajax({
+								type:"post",
+								url:"http://139.9.213.227:4000/takeaway_changeuser",
+								header: {'content-type': 'application/x-www-form-urlencoded'},
+								data:{'id':localStorage.getItem('phone'),'username':data.username,'phone':data.phone,'password':data.npwd},
+								async:false,
+								success:function(res){
+									if(res!='fail'){
+										_this.selfflag=false
+										_this.changeselfflag=true
+										_this.username=res[0][0]
+										localStorage.setItem('username', res[0][0]);
+										localStorage.setItem('password', res[0][1]);
+										localStorage.setItem('phone',res[0][2])
+										localStorage.setItem('admin',res[0][3])
+										mui.toast("修改成功")
+									}else{
+										mui.toast('修改失败！')
+									}
+								}
+							})
+						}
+					}else{
+						mui.toast('请将信息填写完整')
+					}
+				},
+				changeself(){
+					this.selfflag=true
+				},
 				option(item){
 					//sessionStorage.setItem("data", JSON.stringify(item));
 					this.changedata=item
@@ -312,6 +398,27 @@
 				            return item;
 				        }
 				    })
+				},
+				getnotice(){
+					var _this=this
+					$.ajax({
+						type:"get",
+						url:"http://139.9.213.227:4000/takeaway_getnotice",
+						header: {'content-type': 'application/x-www-form-urlencoded'},
+						async:false,
+						success:function(res){
+							if(res!='fail'){
+								_this.notice=''
+								if(res.length>0){
+									for(let i=0;i<res.length;i++){
+										_this.notice+=res[i][0]
+									}
+								}
+							}else{
+								_this.notice=''
+							}
+						}
+					})
 				},
 				deleteitem(id){
 					var _this=this
@@ -346,6 +453,7 @@
 				      setTimeout(() => {
 				        this.isLoading = false;
 						this.getitem()
+						this.getnotice()
 						this.keywords=''
 				      }, 1000);
 				    },
@@ -499,6 +607,7 @@
 			},
 			created(){
 				this.getitem()
+				this.getnotice()
 			},
 			mounted(){
 				this.getDis()

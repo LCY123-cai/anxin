@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="address=no">
+    <script type="text/javascript" src="js/jquery-2.1.0.js" ></script>
+    <script type="text/javascript" src="//3gimg.qq.com/lightmap/components/locationPicker2/js/main-62c2e3b971.js"></script>
+    <title>locationPicker Components Demo - iframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body, html{
+            overflow: hidden;
+        }
+		.itembox{
+			padding:10px;
+			background-color: white;
+			border-radius: 10px;
+			color: #8d8d8d;
+			margin: 10px 0px;
+			box-shadow: #1989fa 0 1px 2px 1px;
+		}
+		.detailbox{
+			padding:10px;
+			background-color: white;
+			border-radius: 10px;
+			color: #8d8d8d;
+			margin: 10px 0px;
+			font-size: 14px;
+		}
+		[v-cloak] {
+		
+		     display: none;
+		
+		}
+		.aboutbox{
+			text-indent:2em;
+			margin: 20px 10px;
+			color: #1989FA;
+			background-color: white;
+			border-radius: 20px;
+			padding: 10px;
+		}
+    </style>
+    <script type="text/javascript" src="js/jquery-2.1.0.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <!-- 引入样式文件 -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.6/lib/index.css"/>
+	
+	<!-- 引入 Vue 和 Vant 的 JS 文件 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.6/lib/vant.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+	<script src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
+</head>
+<body>
+	
+	
+	<div  id="history" v-cloak>
+		<van-nav-bar
+		  title="关于我们"
+		  left-text="返回"
+		  left-arrow
+		  @click-left="onClickLeft"
+		></van-nav-bar>
+		<van-pull-refresh
+		  v-model="isLoading"
+		  success-text="刷新成功"
+		  @refresh="onRefresh"
+		>
+		<div class="aboutbox">
+			{{about}}
+				
+		</div>
+		</div>
+		</van-pull-refresh>
+	</div>
+	
+<script type="text/javascript" charset="utf-8">
+	
+		var app=new Vue({
+			el:"#history",
+			data:{
+				isLoading:false,
+				about:'这是一个安心外卖助手，添加订单信息之后点击开关，开始配送，当距离目的地300米时系统自动发送短信给顾客提示送到！'
+			},
+			methods:{
+				onRefresh() {
+				      setTimeout(() => {
+				        this.isLoading = false;
+						
+						this.keywords=''
+				      }, 1000);
+				    },
+				onClickLeft() {
+				      history.go(-1)
+				},
+				
+			},
+			created() {
+				
+				
+			}
+			
+			
+			
+		})
+    </script>	
+</body>
+</html>
