@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="address=no">
+    <script type="text/javascript" src="js/jquery-2.1.0.js" ></script>
+    <script type="text/javascript" src="//3gimg.qq.com/lightmap/components/locationPicker2/js/main-62c2e3b971.js"></script>
+    <title>locationPicker Components Demo - iframe</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        body, html{
+            overflow: hidden;
+        }
+		.login{
+			margin-top: 60%;
+			box-shadow: rgba(0,0,0,.2) 0 1px 5px 2px;
+		}
+    </style>
+    <script type="text/javascript" src="js/jquery-2.1.0.js" ></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+    <script src="js/mui.min.js"></script>
+    <link href="css/mui.min.css" rel="stylesheet"/>
+    <!-- 引入样式文件 -->
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vant@2.6/lib/index.css"/>
+	
+	<!-- 引入 Vue 和 Vant 的 JS 文件 -->
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vant@2.6/lib/vant.min.js"></script>
+	<script src="https://cdn.staticfile.org/vue-resource/1.5.1/vue-resource.min.js"></script>
+</head>
+<body>
+	
+	
+	<div  id="self">
+		<van-nav-bar
+		  title="个人信息"
+		  left-text="返回"
+		  left-arrow
+		  @click-left="onClickLeft"
+		/>
+		
+	</div>
+	
+<script type="text/javascript" charset="utf-8">
+	
+		var app=new Vue({
+			el:"#self",
+			data:{
+				data:{
+					'username':localStorage.getItem('username'),
+					'phone':localStorage.getItem('phone'),
+					'password':localStorage.getItem('password')
+				}
+			},
+			methods:{
+				changeitem(){
+					
+				},
+				delete(){
+					
+				},
+				onClickLeft() {
+				      history.go(-1)
+					  
+				}
+			},
+			created() {
+				console.log(this.data)
+				
+			}
+			
+			
+			
+		})
+		
+    </script>	
+</body>
+</html>
+
