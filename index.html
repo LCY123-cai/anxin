@@ -28,20 +28,32 @@
 		
 		}
 		.itembox{
-			padding:5px;
-			background-color: white;
-			border-radius: 10px;
-			margin:10px 0px;
-			color: #8d8d8d;
+			
 		}
 		.send{
 			box-shadow: #1989fa 0 1px 2px 1px;
+			padding:10px;
+			background: linear-gradient(to right, #00c8c8, #00a2f3);
+			border-radius: 10px;
+			margin:10px 0px;
+			color: white;
+			
 		}
 		.nosend{
 			box-shadow: #eae6dc 0 1px 2px 1px;
+			padding:10px;
+			background: linear-gradient(to right, #28527a, #77067f);
+			border-radius: 10px;
+			margin:10px 0px;
+			color: white;
 		}
 		.send span{
-			color: #1989fa;
+			
+			
+		}
+		.nosend span{
+			
+			
 		}
 		.custom-image .van-empty__image {
 		  width: 90px;
@@ -93,7 +105,7 @@
 	<div id="app" v-cloak>
 		
 		<header class="mui-bar mui-bar-nav" >
-		    <h1 class="mui-title" >安心外卖</h1>
+		    <h1 class="mui-title" style="color: #1989FA;font-weight: 500;">安心外卖</h1>
 			
 		</header>
 		<!-- <div style="position: absolute;">
@@ -126,11 +138,69 @@
 					经纬度{{longitude}}<br />
 					{{latitude}}
 				</div>
-				<div v-if='waimaiData.length>0' >
-					<div class="mui-input-row mui-search">
-					    <input type="search" class="mui-input-clear" v-model="keywords" placeholder="输入手机号/名字/地址搜索订单">
+				<div v-if='waimaiData.length>0||waimaiDataNo.length' >
+					<div v-if="waimaiData.length>0">
+					<div class="send" style="text-align: center;margin: 0px;font-size: 15px;">---  配送中{{waimaiData.length}}份  ---</div>
+						<div v-for="item in waimaiData">
+							<transition name="van-slide-left">
+							  <div v-show="active==0">
+								  
+								  <van-swipe-cell>
+								  <van-row >
+								    <van-col span="24"  class="itembox" :class=[item.send?"send":"nosend"]>
+										<van-row >
+											<van-col span="20" @click='option(item)'>
+												<span>名字：{{item.name}}</span><br />
+												<span>手机号：{{item.phone}}</span><br />
+												<span>地址：{{item.location}}</span><br />
+												<span v-if="item.send">
+													配送中！还有：{{item.dis}}米
+												</span>
+												<span v-else>未开始配送！</span><br />
+												<span>创建时间：{{item.time}}</span><br />
+											</van-col>
+											<van-col span="4">
+												<van-switch @click="sendchange(item)"  v-model="item.send" size="24px" />
+											</van-col>
+										</van-row>
+										
+										<row>
+											<van-steps
+											  :active="item.sendactive"
+											  active-icon="success"
+											  active-color="#38f"
+											>
+											  <van-step>订单已添加</van-step>
+											  <van-step>开始配送</van-step>
+											  <van-step>已短信通知</van-step>
+											</van-steps>
+										</row>
+									</van-col>
+								  </van-row>
+								  <template #right>
+								      <van-button
+								            text="删除"
+								            style="height: 90%;margin-top: 10px;padding: 5px;border-radius: 10px;"
+											color='linear-gradient(to right, #ffffff, #fd0000)'
+											square
+											@click='deleteitem(item.id)'
+								          />
+								    </template>
+								  </van-swipe-cell>
+							  </div>
+							</transition>	
+						</div>
 					</div>
-					<div v-for="item in search(keywords)">
+					<div v-else>
+						<van-empty
+						  class="custom-image"
+						  image="https://img.yzcdn.cn/vant/custom-empty-image.png"
+						  description="配送中订单为0，快开始配送吧！"
+						/>
+					</div>
+					<div v-if="waimaiDataNo.length>0">
+					<div class="nosend" style="text-align: center;margin: 0px;font-size: 15px;">---  待配送{{waimaiDataNo.length}}份  ---</div>
+					<div v-for="item in waimaiDataNo">
 						<transition name="van-slide-left">
 						  <div v-show="active==0">
 							  
@@ -149,7 +219,7 @@
 											<span>创建时间：{{item.time}}</span><br />
 										</van-col>
 										<van-col span="4">
-											<van-switch   v-model="item.send" size="24px" />
+											<van-switch @click="sendchange(item)"  v-model="item.send" size="24px" />
 										</van-col>
 									</van-row>
 									
@@ -166,13 +236,12 @@
 									</row>
 								</van-col>
 							  </van-row>
-							  
 							  <template #right>
 							      <van-button
 							            
 							            text="删除"
 							            style="height: 90%;margin-top: 10px;padding: 5px;border-radius: 10px;"
-										type="danger"
+										color='linear-gradient(to right, #ffffff, #fd0000)'
 										square
 										@click='deleteitem(item.id)'
 							          />
@@ -180,6 +249,17 @@
 							  </van-swipe-cell>
 						  </div>
 						</transition>	
+					</div>
+					</div>
+					<div v-else>
+						<van-empty
+						  class="custom-image"
+						  image="https://img.yzcdn.cn/vant/custom-empty-image.png"
+						  description="待配送订单为0，快去添加吧！"
+						/>
+						<van-button @click='active=1' round type="info" color="linear-gradient(to right, #4bb0ff, #00557f)" style='width: 160px;'>
+						    添加订单
+						  </van-button>
 					</div>
 					<van-action-sheet v-model="changeflag" title="修改订单">
 					  <div class="content">
@@ -212,7 +292,7 @@
 					  style='margin-top: 40%;margin-bottom: 50%;'
 					  description="待配送订单为0，快去添加吧！"
 					/>
-					<van-button @click='active=1' round type="info" color="linear-gradient(to right, #4bb0ff, #f61c85)" style='width: 160px;'>
+					<van-button @click='active=1' round type="info" color="linear-gradient(to right, #4bb0ff, #00007f)" style='width: 160px;'>
 					    添加订单
 					  </van-button>
 				</div>
@@ -296,7 +376,7 @@
 						</div>
 					</van-popup>
 					<van-col span="20" offset="2">
-						<van-button icon='clear' style='width: 100%;' color="linear-gradient(to right, #4bb0ff, #6149f6)" round @click="loginout">退出</van-button>
+						<van-button icon='clear' style='width: 100%;' color="linear-gradient(to right, #4bb0ff, #ff007f)" round @click="loginout">退出</van-button>
 					</van-col>
 					
 				</van-row>
@@ -332,6 +412,7 @@
 				changeselfflag:true,
 				formdata:{name:'',phone:'',location:''},
 				waimaiData:[],
+				waimaiDataNo:[],
 				changedata:{},
 				selfdata:{
 					'username':localStorage.getItem('username'),
@@ -347,6 +428,23 @@
 				]
 			},
 			methods:{
+				sendchange(item){
+					var _this=this
+					$.ajax({
+						type:"post",
+						url:"http://139.9.213.227:4000/takeaway_sendchange",
+						header: {'content-type': 'application/x-www-form-urlencoded'},
+						data:{'id':item.id,'send':!item.send},
+						async:false,
+						success:function(res){
+							if(res=='ok'){
+								_this.getitem()
+							}else{
+								mui.toast("发生错误！稍后再试！")
+							}
+						}
+					})
+				},
 				checkandupdate(){
 					var _this=this
 					let data=_this.selfdata
@@ -369,9 +467,9 @@
 										localStorage.setItem('password', res[0][1]);
 										localStorage.setItem('phone',res[0][2])
 										localStorage.setItem('admin',res[0][3])
-										mui.toast("修改成功")
+										vant.Toast.success('修改成功');
 									}else{
-										mui.toast('修改失败！')
+										vant.Toast.error('修改失败');
 									}
 								}
 							})
@@ -431,10 +529,10 @@
 						success:function(res){
 							console.log(res)
 							if(res=='ok'){
-								mui.toast("删除成功")
+								vant.Toast.success('删除成功');
 								_this.getitem()
 							}else{
-								mui.toast("删除失败")
+								vant.Toast.error('删除失败');
 							}
 						}
 					})
@@ -495,7 +593,7 @@
 										_this.changedata='';
 										_this.changeflag=false
 										_this.getitem()
-										mui.toast("修改成功")
+										vant.Toast.success('修改成功');
 									}
 								}
 							})
@@ -536,7 +634,7 @@
 							async:false,
 							success:function(res){
 								if(res=='ok'){
-									mui.toast("添加成功")
+									vant.Toast.success('添加成功');
 									_this.formdata.name=_this.formdata.location=_this.formdata.phone=''
 									_this.active=0
 									_this.getitem()
@@ -564,13 +662,19 @@
 							success:function(res){
 								if (res!='fail') {
 									_this.waimaiData=[]
+									_this.waimaiDataNo=[]
 									this.keywords=''
 									
 									for(let i=0;i<res.length;i++){
-										_this.waimaiData.push({sendactive:'0',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:res[i][5],phone:res[i][6],id:res[i][8],time:res[i][9],dis:''})
+										if (res[i][5]==1) {
+											_this.waimaiData.push({sendactive:'1',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:true,phone:res[i][6],id:res[i][8],time:res[i][9],dis:''})
+										} else{
+											_this.waimaiDataNo.push({sendactive:'0',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:false,phone:res[i][6],id:res[i][8],time:res[i][9],dis:''})
+										}
 									}
 								} else{
 									_this.waimaiData=[]
+									_this.waimaiDataNo=[]
 								}
 							},
 							
