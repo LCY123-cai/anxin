@@ -1,0 +1,51 @@
+[33mcommit 929ce38ed1369c15a112465de19373a34efb0d82[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m)[m
+Merge: 2b88c9a 34d6ab5
+Author: LCY123-cai <2592186051@qq.com>
+Date:   Fri Apr 17 21:38:54 2020 +0800
+
+    Merge remote-tracking branch 'upstream/master'
+
+[33mcommit 34d6ab5ff2db5c74d597355f8ecef5a8390cd040[m[33m ([m[1;31mupstream/master[m[33m)[m
+Author: JustinYD <52040090+JustinYD@users.noreply.github.com>
+Date:   Fri Apr 17 20:11:23 2020 +0800
+
+    功能全部完善
+
+[33mcommit 2b88c9a28cc82a697bda34eb7c4929c5a4d2a2af[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Merge: 771451b 9778602
+Author: LCY123-cai <63062166+LCY123-cai@users.noreply.github.com>
+Date:   Wed Apr 15 19:55:30 2020 +0800
+
+    Merge pull request #1 from JustinYD/master
+    
+    update
+
+[33mcommit 97786028438fc2756360d6b7cb54dc40cc675b86[m
+Author: JustinYD <52040090+JustinYD@users.noreply.github.com>
+Date:   Wed Apr 15 18:43:53 2020 +0800
+
+    页面优化及增加同步配送
+
+[33mcommit a6dd413f01287397c99133cc35a60473f799b403[m
+Author: JustinYD <52040090+JustinYD@users.noreply.github.com>
+Date:   Tue Apr 14 21:34:40 2020 +0800
+
+    基本完成
+
+[33mcommit 771451bd3e15e15801480127b43438392729cdb6[m
+Author: JustinYD <52040090+JustinYD@users.noreply.github.com>
+Date:   Mon Apr 13 16:01:59 2020 +0800
+
+    基本功能完成
+
+[33mcommit 93bd9959abc0504e5e796c5577c8ba6f00344712[m
+Author: JustinYD <52040090+JustinYD@users.noreply.github.com>
+Date:   Sat Apr 11 13:54:26 2020 +0800
+
+    接口打通
+
+[33mcommit 3aea6bbf010709ea0cfa69414c81efc30421f961[m
+Author: JustinYD <52040090+JustinYD@users.noreply.github.com>
+Date:   Fri Apr 10 16:03:07 2020 +0800
+
+    第一次上传
