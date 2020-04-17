@@ -89,7 +89,7 @@
 										<span>名字：{{item.name}}</span><br />
 										<span>手机号：{{item.phone}}</span><br />
 										<span>地址：{{item.location}}</span><br />
-										<span>完成时间：{{item.time}}</span><br />
+										<span>完成时间：{{item.finishtime}}</span><br />
 									</van-col>
 								</van-row>
 							</van-col>
@@ -104,7 +104,7 @@
 						  			<span>名字：{{detail.name}}</span><br />
 						  			<span>手机号：{{detail.phone}}</span><br />
 						  			<span>地址：{{detail.location}}</span><br />
-						  			<span>完成时间：{{detail.time}}</span><br />
+						  			<span>完成时间：{{detail.finishtime}}</span><br />
 									<span>订单ID：{{detail.id}}</span><br />
 						  		</van-col>
 						  	</van-row>
@@ -117,8 +117,12 @@
 						  		  active-color="#38f"
 						  		>
 								<van-step>
+									<h5>已完成</h5>
+									<span>{{detail.finishtime}}</span>
+								</van-step>
+								<van-step>
 									<h5>已短信通知</h5>
-									<span>{{detail.time}}</span>
+									<span>{{detail.sendtime}}</span>
 								</van-step>
 								<van-step>
 									<h5>开始配送</h5>
@@ -207,7 +211,7 @@
 									this.keywords=''
 									
 									for(let i=0;i<res.length;i++){
-										_this.data.push({sendactive:'0',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:res[i][5],phone:res[i][6],id:res[i][8],time:res[i][10],createtime:res[i][9]})
+										_this.data.push({sendactive:'0',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:res[i][5],phone:res[i][6],id:res[i][8],finishtime:res[i][10],createtime:res[i][9],sendtime:res[i][12]})
 									}
 								} else{
 									_this.data=[]

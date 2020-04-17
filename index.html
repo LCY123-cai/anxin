@@ -149,7 +149,7 @@
 								  <van-row >
 								    <van-col span="24"  class="itembox" :class=[item.send?"send":"nosend"]>
 										<van-row >
-											<van-col span="20" @click='option(item)'>
+											<van-col span="20" >
 												<span>名字：{{item.name}}</span><br />
 												<span>手机号：{{item.phone}}</span><br />
 												<span>地址：{{item.location}}</span><br />
@@ -179,11 +179,11 @@
 								  </van-row>
 								  <template #right>
 								      <van-button
-								            text="删除"
+								            text="完成"
 								            style="height: 90%;margin-top: 10px;padding: 5px;border-radius: 10px;"
-											color='linear-gradient(to right, #ffffff, #fd0000)'
+											color='linear-gradient(to right, #00007f, #00ffff)'
 											square
-											@click='deleteitem(item.id)'
+											@click='finishitem(item.id)'
 								          />
 								    </template>
 								  </van-swipe-cell>
@@ -414,6 +414,7 @@
 				waimaiData:[],
 				waimaiDataNo:[],
 				changedata:{},
+				min:'',
 				selfdata:{
 					'username':localStorage.getItem('username'),
 					'phone':localStorage.getItem('phone'),
@@ -533,6 +534,43 @@
 								_this.getitem()
 							}else{
 								vant.Toast.error('删除失败');
+							}
+						}
+					})
+				},
+				finishitem(id){
+					
+					var _this=this
+					Date.prototype.Format = function (fmt) { // author: meizz
+					    var o = {
+					        "M+": this.getMonth() + 1, // 月份
+					        "d+": this.getDate(), // 日
+					        "h+": this.getHours(), // 小时
+					        "m+": this.getMinutes(), // 分
+					        "s+": this.getSeconds(), // 秒
+					        "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+					        "S": this.getMilliseconds() // 毫秒
+					    };
+					    if (/(y+)/.test(fmt))
+					        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+					    for (var k in o)
+					        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+					            return fmt;
+					}
+					var time=new Date().Format("yyyy-MM-dd hh:mm:ss"); 
+					$.ajax({
+						type:"post",
+						url:"http://139.9.213.227:4000/takeaway_finishitem",
+						header: {'content-type': 'application/x-www-form-urlencoded'},
+						data:{'id':id,'time':time},
+						async:false,
+						success:function(res){
+							console.log(res)
+							if(res=='ok'){
+								vant.Toast.success('已保存');
+								_this.getitem()
+							}else{
+								vant.Toast.error('请稍后重新保存！');
 							}
 						}
 					})
@@ -667,15 +705,21 @@
 									
 									for(let i=0;i<res.length;i++){
 										if (res[i][5]==1) {
-											_this.waimaiData.push({sendactive:'1',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:true,phone:res[i][6],id:res[i][8],time:res[i][9],dis:''})
+											if (res[i][11]==1) {
+												_this.waimaiData.push({sendactive:'2',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:true,phone:res[i][6],id:res[i][8],time:res[i][9],dis:'',sendmessage:true})
+											} else{
+												_this.waimaiData.push({sendactive:'1',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:true,phone:res[i][6],id:res[i][8],time:res[i][9],dis:'',sendmessage:false})
+											}
 										} else{
-											_this.waimaiDataNo.push({sendactive:'0',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:false,phone:res[i][6],id:res[i][8],time:res[i][9],dis:''})
+											_this.waimaiDataNo.push({sendactive:'0',name:res[i][1],mlongitude:res[i][3],mlatitude:res[i][4],location:res[i][2],send:false,phone:res[i][6],id:res[i][8],time:res[i][9],dis:'',sendmessage:res[i][11]})
 										}
 									}
 								} else{
 									_this.waimaiData=[]
 									_this.waimaiDataNo=[]
 								}
+								console.log(_this.waimaiData)
+								console.log(_this.waimaiDataNo)
 							},
 							
 					});
@@ -707,11 +751,102 @@
 								}
 						});
 					}
+				},
+				sendMessage(id,phone,name,location,i){
+					var _this=this
+					Date.prototype.Format = function (fmt) { // author: meizz
+										    var o = {
+										        "M+": this.getMonth() + 1, // 月份
+										        "d+": this.getDate(), // 日
+										        "h+": this.getHours(), // 小时
+										        "m+": this.getMinutes(), // 分
+										        "s+": this.getSeconds(), // 秒
+										        "q+": Math.floor((this.getMonth() + 3) / 3), // 季度
+										        "S": this.getMilliseconds() // 毫秒
+										    };
+										    if (/(y+)/.test(fmt))
+										        fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+										    for (var k in o)
+										        if (new RegExp("(" + k + ")").test(fmt)) fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+										            return fmt;
+										}
+					var time=new Date().Format("MM-dd hh:mm");
+					var time1=new Date().Format("yyyy-MM-dd hh:mm:ss"); 
+					console.log(time)
+					if(phone!=''&&name!=''&&location!=''&&time!=''){
+								$.ajax({
+								type:"post",
+								url:"http://139.9.213.227:4000/takeaway_sendmessage",
+								header: {'content-type': 'application/x-www-form-urlencoded'},
+								data:{
+									'phone':phone,
+									'name':name,
+									'location':location,
+									'time':time,
+									'id':id,
+									'finishtime':time1
+								},
+								async:false,
+								success:function(res){
+									if (res=='ok') {
+										vant.Notify({
+										  message: '已短信通知',
+										  color: '#ffffff',
+										  background: '#55aaff',
+										  duration: 5000
+										});
+										_this.waimaiData[i].sendmessage=true;
+									} else{
+										vant.Notify({
+										  message: '短信通知失败',
+										  color: '#ffffff',
+										  background: '#aa0000',
+										  duration: 5000
+										});
+									}
+									
+								}
+						});
+					}
+				},
+				getYuzhi(){
+					var _this=this
+					var min=''
+					$.ajax({
+							type:"get",
+							url:"http://139.9.213.227:4000/takeaway_getmin",
+							header: {'content-type': 'application/x-www-form-urlencoded'},
+							async:true,
+							success:function(res){
+								_this.min=res[0][1]
+								localStorage.setItem('min',res[0][1])
+							}
+					});
+				},
+				sleep(numberMillis){
+				    var now = new Date();
+				    var exitTime = now.getTime() + numberMillis;
+				    while (true) {
+				        now = new Date();
+				        if (now.getTime() > exitTime)
+				            return;
+				    }
 				}
 			},
 			created(){
 				this.getitem()
 				this.getnotice()
+				this.getYuzhi()
+				var that=this
+				// setTimeout(function(){
+				// 	for (let i=0;i<5;i++) {
+				// 		console.log(i)
+						
+				// 	}
+				// },5000)
+				
+				//this.sendMessage('15187464876','杨培懂','腾冲市明光镇凤凰社区村民委员会')
+				
 			},
 			mounted(){
 				this.getDis()
@@ -720,19 +855,25 @@
 				
 			},
 			updated(){
+				
 				var _this=this
+				var min=_this.min
 				for(let i=0;i<_this.waimaiData.length;i++){
+					//判断是否开始配送
 					if(_this.waimaiData[i].send){
-						var sendflag=parseInt(_this.waimaiData[i].dis)
-						if(sendflag<300){
-							_this.waimaiData[i].sendactive='2'
-						}else{
-							_this.waimaiData[i].sendactive='1'
+						//判断是否发送过短信
+						if (!_this.waimaiData[i].sendmessage) {
+							var sendflag=parseInt(_this.waimaiData[i].dis)
+							if(sendflag<min){
+								_this.sendMessage(_this.waimaiData[i].id,_this.waimaiData[i].phone,_this.waimaiData[i].name,_this.waimaiData[i].location,i)
+								_this.waimaiData[i].sendactive='2'
+								//_this.sleep(3000)
+							}else{
+								_this.waimaiData[i].sendactive='1'
+							}
+						} else{
+							console.log('no send')
 						}
-						
-						// setTimeout (function(){
-						// 	_this.getDis(_this.waimaiData[i].mlatitude,_this.waimaiData[i].mlongitude,i)
-						// },500)
 					}else{
 						_this.waimaiData[i].sendactive='0'
 					}
@@ -799,9 +940,7 @@
 							app.latitude=p.coords.latitude;
 							for(let i=0;i<app.waimaiData.length;i++){
 								if(app.waimaiData[i].send){
-									setTimeout (function(){
-										app.getDis(app.waimaiData[i].mlatitude,app.waimaiData[i].mlongitude,i)
-									},500)
+									app.getDis(app.waimaiData[i].mlatitude,app.waimaiData[i].mlongitude,i)
 								}
 							}
 						}, function(e){
