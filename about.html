@@ -83,7 +83,7 @@
 		  @refresh="onRefresh"
 		>
 		<div class="aboutbox">
-			{{about}}
+			{{about}}{{min}}{{about1}}
 				
 		</div>
 		</div>
@@ -96,7 +96,9 @@
 			el:"#history",
 			data:{
 				isLoading:false,
-				about:'这是一个安心外卖助手，添加订单信息之后点击开关，开始配送，当距离目的地300米时系统自动发送短信给顾客提示送到！'
+				about:'这是一个安心外卖助手，添加订单信息之后点击开关，开始配送，当距离目的地',
+				min:localStorage.getItem('min'),
+				about1:'米时系统自动发送短信给顾客提示送到！'
 			},
 			methods:{
 				onRefresh() {
